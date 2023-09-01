@@ -1,0 +1,5 @@
+{
+  "extends": "@lough/tsconfig/node",
+  "include": ["src"],
+  "ts-node": { "esm": true }
+}

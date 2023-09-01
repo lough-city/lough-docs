@@ -1,0 +1,15 @@
+# Declare files that will always have LF line endings on checkout.
+*.js    eol=lf
+*.cjs    eol=lf
+*.mjs    eol=lf
+*.jsx   eol=lf
+*.ts  eol=lf
+*.d.ts  eol=lf
+*.tsx  eol=lf
+*.vue  eol=lf
+*.json  eol=lf
+*.css  eol=lf
+*.less  eol=lf
+*.scss  eol=lf
+*.sass  eol=lf
+*.styl  eol=lf

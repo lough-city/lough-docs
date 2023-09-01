@@ -1,0 +1,56 @@
+{
+  "name": "@lough/docs-cli",
+  "version": "0.0.0",
+  "description": "This is a Docs tool docked in lough.",
+  "author": {
+    "name": "Lough",
+    "email": "lough@nanzc.com",
+    "home": "lough.city"
+  },
+  "homepage": "https://github.com/lough-city/lough-docs#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lough-city/lough-docs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lough-city/lough-docs/issues"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "lib",
+    "es"
+  ],
+  "main": "es/index.js",
+  "types": "es/index.d.ts",
+  "bin": {
+    "lough-docs": "es/index.js"
+  },
+  "scripts": {
+    "build": "lough-build",
+    "dev": "ts-node --esm src/index.ts"
+  },
+  "dependencies": {
+    "@lough/npm-operate": "^0.3.0",
+    "chalk": "4.1.2",
+    "commander": "^10.0.0",
+    "comment-parser": "^1.4.0",
+    "execa": "^5.1.1",
+    "inquirer": "^8.2.4",
+    "ora": "5.4.1",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@lough/build-cli": "^0.2.0",
+    "ts-node": "^10.9.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.17.0",
+    "npm": ">=7.0.0"
+  }
+}
