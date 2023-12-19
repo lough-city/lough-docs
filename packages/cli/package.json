@@ -28,7 +28,7 @@
   },
   "scripts": {
     "build": "lough-build",
-    "dev": "ts-node --esm src/index.ts"
+    "dev": "npm run build && node ./es/index.js"
   },
   "dependencies": {
     "@lough/npm-operate": "^0.3.0",
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@lough/build-cli": "^0.2.0",
+    "@types/node": "^20.10.5",
     "ts-node": "^10.9.1"
   },
   "publishConfig": {

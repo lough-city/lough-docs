@@ -14,7 +14,14 @@
 // }
 
 // start();
+import { writeFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import ts from 'typescript';
+import { parseTypeScriptAST } from './core/parser';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const path = `E:\\nanzc\\lough-city\\lough-docs\\packages\\cli\\src\\test.ts`;
 
@@ -30,38 +37,9 @@ const checker = program.getTypeChecker();
 // 获取源文件的语法树
 const sourceFile = program.getSourceFile(path);
 
-function visit(node: any) {
-  if (ts.isClassDeclaration(node)) {
-    // 如果这是一个类定义，打印类的名称
-    const symbol = checker.getSymbolAtLocation(node.name!);
-    console.log('Class:', symbol!.name);
-  } else if (ts.isInterfaceDeclaration(node)) {
-    // 如果这是一个接口定义，打印接口的名称
-    const symbol = checker.getSymbolAtLocation(node.name);
-    console.log('Interface:', symbol!.name);
-  } else if (ts.isFunctionDeclaration(node)) {
-    // 如果这是一个函数定义，打印函数的名称
-    const symbol = checker.getSymbolAtLocation(node.name!);
-    console.log('Function:', symbol!.name);
-  } else if (ts.isVariableDeclaration(node)) {
-    // 如果这是一个变量定义，打印变量的名称和类型
-    const symbol = checker.getSymbolAtLocation(node.name);
-    const type = checker.getTypeOfSymbolAtLocation(symbol!, symbol!.valueDeclaration!);
-    console.log('Variable:', symbol!.name, 'Type:', checker.typeToString(type));
-  }
+const declarationList = parseTypeScriptAST(sourceFile!, checker);
 
-  // 检查是否有 JSDoc 注释
+writeFileSync(join(__dirname, 'a.txt'), JSON.stringify(declarationList, undefined, 4), { encoding: 'utf-8' });
 
-  if (node.jsDoc && node.jsDoc.length > 0) {
-    debugger;
-    for (const doc of node.jsDoc) {
-      console.log('JSDoc:', doc.comment);
-    }
-  }
-
-  // 继续遍历语法树的其他部分
-  ts.forEachChild(node, visit);
-}
-
-// 遍历语法树
-ts.forEachChild(sourceFile as any, visit);
+// TODO: 建立引用关系
+// TODO: 检测流程：先基础类型 再复杂类型 然后复杂引用基础
