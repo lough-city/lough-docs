@@ -1,5 +1,5 @@
 /**
- * enum a
+ * 枚举A
  * @abstract a
  */
 export enum ENUM_A {
@@ -14,7 +14,7 @@ export enum ENUM_A {
 }
 
 /**
- * interface a
+ * 接口A
  */
 export interface InterfaceA {
   /**
@@ -38,14 +38,14 @@ export interface InterfaceA {
 }
 
 /**
- * type a
+ * 类型A
  */
 export type TypeA = InterfaceA;
 
 export type TypeB = number;
 
 /**
- * const a
+ * 变量A
  */
 export const constA = 'A';
 
@@ -59,19 +59,20 @@ export const calc = () => {
 };
 
 /**
- * function a
+ * 函数A
  */
 export function functionA(
   /**
-   * functionA _a
+   * 这是一个参数 a
    */
-  _a: number
+  _a: number,
+  _b = '2'
 ) {
   return true;
 }
 
 /**
- * class a
+ * 类A
  */
 export class ClassA {
   a = 1;

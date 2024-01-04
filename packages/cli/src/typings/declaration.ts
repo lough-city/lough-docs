@@ -1,5 +1,6 @@
 import { DECLARATION_KIND } from '../constants/declaration';
 import { JSDocComments } from './comment';
+import { ParameterDeclaration } from './item';
 
 export interface EnumDeclaration {
   kind: DECLARATION_KIND.ENUM;
@@ -52,11 +53,7 @@ export interface FunctionDeclaration {
   kind: DECLARATION_KIND.FUNCTION;
   name: string;
   comments: JSDocComments;
-  parameters: Array<{
-    name: string;
-    type: string;
-    comments: JSDocComments;
-  }>;
+  parameters: Array<ParameterDeclaration>;
   return: string;
 }
 

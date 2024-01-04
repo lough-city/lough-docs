@@ -119,6 +119,8 @@ const getFunctionDeclaration = (node: ts.FunctionDeclaration, checker: ts.TypeCh
       return {
         name: paramSymbol.name,
         type: checker.typeToString(paramType),
+        required: !param.questionToken && !param.initializer,
+        default: param.initializer ? param.initializer.getText() : undefined,
         comments: parseJSDocComments(paramSymbol, checker)
       };
     }),
@@ -127,15 +129,21 @@ const getFunctionDeclaration = (node: ts.FunctionDeclaration, checker: ts.TypeCh
 };
 
 const getVariableDeclaration = (node: ts.VariableDeclaration, checker: ts.TypeChecker): VariableDeclaration => {
+  if (ts.isVariableStatement(node)) {
+    node = (node as ts.VariableStatement).declarationList.declarations[0];
+  }
+
   const symbol = checker.getSymbolAtLocation(node.name)!;
 
   return {
     ...getDeclarationCommon<DECLARATION_KIND.VARIABLE>(node, checker),
-    type: symbol ? checker.typeToString(checker.getDeclaredTypeOfSymbol(symbol)) : ''
+    type: symbol
+      ? checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration || node))
+      : 'any'
   };
 };
 
-export const getNodeDeclaration = (node: ts.Node, checker: ts.TypeChecker): AllDeclaration => {
+export const getNodeDeclaration = (node: ts.Node, checker: ts.TypeChecker): AllDeclaration | undefined => {
   const kind = getNodeDeclarationKind(node);
 
   switch (kind) {
@@ -149,7 +157,9 @@ export const getNodeDeclaration = (node: ts.Node, checker: ts.TypeChecker): AllD
       return getClassDeclaration(node as ts.ClassDeclaration, checker);
     case DECLARATION_KIND.FUNCTION:
       return getFunctionDeclaration(node as ts.FunctionDeclaration, checker);
-    default:
+    case DECLARATION_KIND.VARIABLE:
       return getVariableDeclaration(node as ts.VariableDeclaration, checker);
+    default:
+      return undefined;
   }
 };

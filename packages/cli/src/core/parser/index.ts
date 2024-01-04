@@ -1,16 +1,8 @@
 import ts from 'typescript';
 import { AllDeclaration } from '../../typings/declaration';
 import { getNodeDeclaration } from './declaration';
-
-function isNodeExported(node: any) {
-  // 检查该节点是否直接带有 'export' 修饰符
-  const isDirectExport = (ts.getCombinedModifierFlags(node) & ts.ModifierFlags.Export) !== 0;
-
-  // 检查该节点的父节点是否是 'ExportDeclaration'
-  const isExportDeclaration = node.parent && node.parent.kind === ts.SyntaxKind.ExportDeclaration;
-
-  return isDirectExport || isExportDeclaration;
-}
+import { isNodeExported } from './export';
+import { DECLARATION_KIND } from '/src/constants/declaration';
 
 export const parseTypeScriptAST = (source: ts.SourceFile, checker: ts.TypeChecker) => {
   const declarationList: Array<AllDeclaration> = [];
@@ -18,8 +10,17 @@ export const parseTypeScriptAST = (source: ts.SourceFile, checker: ts.TypeChecke
   ts.forEachChild(source, node => {
     if (!isNodeExported(node)) return;
 
-    declarationList.push(getNodeDeclaration(node, checker));
+    const declaration = getNodeDeclaration(node, checker);
+    if (declaration) declarationList.push(declaration);
   });
 
   return declarationList;
+};
+
+export const groupDeclarationByKind = (declarationList: Array<AllDeclaration>) => {
+  return declarationList.reduce((map, declaration) => {
+    if (!map[declaration.kind]) map[declaration.kind] = [declaration];
+    else map[declaration.kind].push(declaration);
+    return map;
+  }, {} as Record<DECLARATION_KIND, Array<AllDeclaration>>);
 };

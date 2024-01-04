@@ -18,6 +18,7 @@ import { writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import ts from 'typescript';
+import { makerDeclarationDocs } from './core/maker';
 import { parseTypeScriptAST } from './core/parser';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -39,7 +40,4 @@ const sourceFile = program.getSourceFile(path);
 
 const declarationList = parseTypeScriptAST(sourceFile!, checker);
 
-writeFileSync(join(__dirname, 'a.txt'), JSON.stringify(declarationList, undefined, 4), { encoding: 'utf-8' });
-
-// TODO: 建立引用关系
-// TODO: 检测流程：先基础类型 再复杂类型 然后复杂引用基础
+writeFileSync(join(__dirname, 'test.md'), makerDeclarationDocs(declarationList), { encoding: 'utf-8' });
