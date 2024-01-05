@@ -8,6 +8,9 @@ export const parseTypeScriptAST = (source: ts.SourceFile, checker: ts.TypeChecke
   const declarationList: Array<AllDeclaration> = [];
 
   ts.forEachChild(source, node => {
+    if (ts.isExportDeclaration(node)) {
+      //
+    }
     if (!isNodeExported(node)) return;
 
     const declaration = getNodeDeclaration(node, checker);
@@ -16,6 +19,13 @@ export const parseTypeScriptAST = (source: ts.SourceFile, checker: ts.TypeChecke
 
   return declarationList;
 };
+
+// export const parseTypeScriptProject = (path: string) => {
+//   const program = ts.createProgram([path], {});
+//   const checker = program.getTypeChecker();
+//   const sourceFile = program.getSourceFile(path);
+//   return parseTypeScriptAST(sourceFile!, checker);
+// };
 
 export const groupDeclarationByKind = (declarationList: Array<AllDeclaration>) => {
   return declarationList.reduce((map, declaration) => {

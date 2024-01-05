@@ -4,11 +4,13 @@
  */
 export enum ENUM_A {
   /**
-   * 成员 aa
+   * 我a
+   * @description 指定a类型 `number` 23
    */
   a = 'A',
   /**
-   * 成员 aa
+   * 我aa
+   * @description 指定aa类型
    */
   aa = 'AA'
 }
@@ -75,6 +77,10 @@ export function functionA(
  * 类A
  */
 export class ClassA {
+  /**
+   * 动态
+   * @description a属性
+   */
   a = 1;
 
   static a = 1;

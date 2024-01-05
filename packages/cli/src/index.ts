@@ -24,20 +24,18 @@ import { parseTypeScriptAST } from './core/parser';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const path = `E:\\nanzc\\lough-city\\lough-docs\\packages\\cli\\src\\test.ts`;
+const path = `E:\\nanzc\\logically-city\\coding\\packages\\advanced\\src\\index.ts`;
 
 // 读取 TypeScript 文件
 // const sourceCode = ts.readConfigFile(path, ts.sys.readFile).config;
 
-// 创建程序
-const program = ts.createProgram([path], {});
+const parseTypeScriptProject = (path: string) => {
+  const program = ts.createProgram([path], {});
+  const checker = program.getTypeChecker();
+  const sourceFile = program.getSourceFile(path);
+  return parseTypeScriptAST(sourceFile!, checker);
+};
 
-// 获取类型检查器
-const checker = program.getTypeChecker();
-
-// 获取源文件的语法树
-const sourceFile = program.getSourceFile(path);
-
-const declarationList = parseTypeScriptAST(sourceFile!, checker);
+const declarationList = parseTypeScriptProject(path);
 
 writeFileSync(join(__dirname, 'test.md'), makerDeclarationDocs(declarationList), { encoding: 'utf-8' });

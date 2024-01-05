@@ -14,5 +14,12 @@ export function parseJSDocComments(symbol: ts.Symbol, checker: ts.TypeChecker): 
       title += doc.text + '\n';
     }
   }
-  return { title: title.trim(), tags };
+  let description = '-';
+  if (tags['description']) {
+    // eslint-disable-next-line prefer-destructuring
+    description = tags['description'];
+    delete tags['description'];
+  }
+
+  return { title: title.trim(), description, tags };
 }

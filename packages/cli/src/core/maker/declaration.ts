@@ -7,6 +7,9 @@ import {
   VariableDeclaration
 } from '../../typings/declaration';
 import {
+  makDeclarationEnumMembers,
+  makDeclarationInterfaceMembers,
+  makeDeclarationClassMembers,
   makeDeclarationComments,
   makeDeclarationParameters,
   makeDeclarationReturn,
@@ -26,6 +29,7 @@ export const makeByEnum = (declarationList: Array<EnumDeclaration>) => {
 
 ${makeDeclarationTitle(declaration)}
 ${makeDeclarationComments(declaration.comments)}
+${makDeclarationEnumMembers(declaration.members)}
 `;
   }
 
@@ -44,19 +48,7 @@ export const makeByInterface = (declarationList: Array<InterfaceDeclaration>) =>
 
 ${makeDeclarationTitle(declaration)}
 ${makeDeclarationComments(declaration.comments)}
-members
-
-${declaration.members
-  .map(
-    member => `- ${member.name} ${member.comments.title}
-
-${member.type}
-
-${JSON.stringify(member.comments.tags)}
-
-`
-  )
-  .join('')}
+${makDeclarationInterfaceMembers(declaration.members)}
 `;
   }
 
@@ -94,21 +86,8 @@ export const makeByClass = (declarationList: Array<ClassDeclaration>) => {
 
 ${makeDeclarationTitle(declaration)}
 ${makeDeclarationComments(declaration.comments)}
-members
-
-${declaration.members
-  .map(
-    member => `- ${member.name} ${member.comments.title}
-
-${JSON.stringify(member.flags)}
-
-${member.type}
-
-${JSON.stringify(member.comments.tags)}
-
-`
-  )
-  .join('')}
+${makeDeclarationParameters(declaration.parameters)}
+${makeDeclarationClassMembers(declaration.members)}
 `;
   }
 

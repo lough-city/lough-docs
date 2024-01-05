@@ -1,27 +1,24 @@
 import { DECLARATION_KIND } from '../constants/declaration';
 import { JSDocComments } from './comment';
-import { ParameterDeclaration } from './item';
+import {
+  ClassMemberDeclaration,
+  EnumMemberDeclaration,
+  InterfaceMemberDeclaration,
+  ParameterDeclaration
+} from './item';
 
 export interface EnumDeclaration {
   kind: DECLARATION_KIND.ENUM;
   name: string;
   comments: JSDocComments;
-  members: Array<{
-    name: string;
-    value: string | number;
-    comments: JSDocComments;
-  }>;
+  members: Array<EnumMemberDeclaration>;
 }
 
 export interface InterfaceDeclaration {
   kind: DECLARATION_KIND.INTERFACE;
   name: string;
   comments: JSDocComments;
-  members: Array<{
-    name: string;
-    type: string;
-    comments: JSDocComments;
-  }>;
+  members: Array<InterfaceMemberDeclaration>;
 }
 
 export interface TypeAliasDeclaration {
@@ -35,18 +32,8 @@ export interface ClassDeclaration {
   kind: DECLARATION_KIND.CLASS;
   name: string;
   comments: JSDocComments;
-  parameters: Array<{
-    name: string;
-    value: string | number;
-    comments: JSDocComments;
-  }>;
-  members: Array<{
-    name: string;
-    type: string;
-    flags: Array<string>;
-    comments: JSDocComments;
-  }>;
-  return: string;
+  parameters: Array<ParameterDeclaration>;
+  members: Array<ClassMemberDeclaration>;
 }
 
 export interface FunctionDeclaration {

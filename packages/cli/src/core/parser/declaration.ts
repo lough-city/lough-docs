@@ -18,7 +18,7 @@ const getDeclarationCommon = <T = DECLARATION_KIND>(node: ts.Node, checker: ts.T
   return {
     kind: getNodeDeclarationKind(node) as T,
     name: symbol?.name || '',
-    comments: symbol ? parseJSDocComments(symbol, checker) : { title: '', tags: {} }
+    comments: symbol ? parseJSDocComments(symbol, checker) : { title: '', description: '', tags: {} }
   };
 };
 
@@ -102,8 +102,7 @@ const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker)
         flags: flags,
         comments: parseJSDocComments(symbol, checker)
       };
-    }),
-    return: ''
+    })
   };
 };
 
