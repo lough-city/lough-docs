@@ -7,14 +7,17 @@ import {
   InterfaceMemberDeclaration,
   ParameterDeclaration
 } from '../../typings/item';
+import { makeMarkdownTitle } from './markdown';
 
 export const makeDeclarationTitle = (declaration: AllDeclaration) => {
-  return `### ${declaration.name} ${declaration.comments.title}
+  return `${makeMarkdownTitle(`${declaration.name} ${declaration.comments.title}`, 4)}
 `;
 };
 
 export const makeDeclarationDescription = (comments: JSDocComments) => {
-  return comments.description || '-';
+  return comments.title && comments.description
+    ? `${comments.title}  ${comments.description}`
+    : comments.description || comments.title || '-';
 };
 
 export const makeDeclarationComments = (comments: JSDocComments) => {

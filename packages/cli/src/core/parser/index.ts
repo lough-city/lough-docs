@@ -1,31 +1,49 @@
 import ts from 'typescript';
+import { DECLARATION_KIND } from '../../constants/declaration';
 import { AllDeclaration } from '../../typings/declaration';
+import { resolveModulePath } from '../../utils/path';
+import { parseTypeScriptPath } from '../../utils/typescript';
 import { getNodeDeclaration } from './declaration';
 import { isNodeExported } from './export';
-import { DECLARATION_KIND } from '/src/constants/declaration';
 
-export const parseTypeScriptAST = (source: ts.SourceFile, checker: ts.TypeChecker) => {
+export const parseTypeScriptProject = (path: string) => {
+  const { checker, sourceFile } = parseTypeScriptPath(path);
+  if (!sourceFile) {
+    console.warn('Missing sourceFile for:', path);
+    return;
+  }
+
   const declarationList: Array<AllDeclaration> = [];
 
-  ts.forEachChild(source, node => {
+  ts.forEachChild(sourceFile, node => {
     if (ts.isExportDeclaration(node)) {
-      //
-    }
-    if (!isNodeExported(node)) return;
+      if (node.moduleSpecifier) {
+        const moduleSpecifierText = node.moduleSpecifier.getText().replace(/['"]/g, '');
+        const resolvedModulePath = resolveModulePath(path, moduleSpecifierText);
 
-    const declaration = getNodeDeclaration(node, checker);
-    if (declaration) declarationList.push(declaration);
+        if (resolvedModulePath) {
+          let list = parseTypeScriptProject(resolvedModulePath) || [];
+
+          if (node.exportClause && ts.isNamedExports(node.exportClause)) {
+            const exportedNames = node.exportClause.elements.map(e => e.name.text);
+            if (list.length) list = list.filter(item => exportedNames.includes(item.name));
+          }
+
+          declarationList.push(...list);
+        } else {
+          console.warn('Could not resolve module path for:', moduleSpecifierText);
+        }
+      }
+    } else {
+      if (!isNodeExported(node)) return;
+
+      const declaration = getNodeDeclaration(node, checker);
+      if (declaration) declarationList.push(declaration);
+    }
   });
 
   return declarationList;
 };
-
-// export const parseTypeScriptProject = (path: string) => {
-//   const program = ts.createProgram([path], {});
-//   const checker = program.getTypeChecker();
-//   const sourceFile = program.getSourceFile(path);
-//   return parseTypeScriptAST(sourceFile!, checker);
-// };
 
 export const groupDeclarationByKind = (declarationList: Array<AllDeclaration>) => {
   return declarationList.reduce((map, declaration) => {

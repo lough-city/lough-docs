@@ -16,11 +16,12 @@ import {
   makeDeclarationTitle,
   makeDeclarationType
 } from './item';
+import { makeMarkdownTitle } from './markdown';
 
 export const makeByEnum = (declarationList: Array<EnumDeclaration>) => {
   let markdown = `
 
-## Enum
+${makeMarkdownTitle('Enum', 3)}
 
 `;
 
@@ -39,7 +40,7 @@ ${makDeclarationEnumMembers(declaration.members)}
 export const makeByInterface = (declarationList: Array<InterfaceDeclaration>) => {
   let markdown = `
 
-## Interface
+${makeMarkdownTitle('Interface', 3)}
 
 `;
 
@@ -58,7 +59,7 @@ ${makDeclarationInterfaceMembers(declaration.members)}
 export const makeByTypeAlias = (declarationList: Array<TypeAliasDeclaration>) => {
   let markdown = `
 
-## TypeAlias
+${makeMarkdownTitle('TypeAlias', 3)}
 
 `;
 
@@ -77,7 +78,7 @@ ${makeDeclarationComments(declaration.comments)}
 export const makeByClass = (declarationList: Array<ClassDeclaration>) => {
   let markdown = `
 
-## Class
+${makeMarkdownTitle('Class', 3)}
 
 `;
 
@@ -97,7 +98,7 @@ ${makeDeclarationClassMembers(declaration.members)}
 export const makeByFunction = (declarationList: Array<FunctionDeclaration>) => {
   let markdown = `
 
-## Function
+${makeMarkdownTitle('Function', 3)}
 
 `;
 
@@ -117,7 +118,7 @@ ${makeDeclarationReturn(declaration.return)}
 export const makeByVariable = (declarationList: Array<VariableDeclaration>) => {
   let markdown = `
 
-## Variable
+${makeMarkdownTitle('Variable', 3)}
 
 `;
 

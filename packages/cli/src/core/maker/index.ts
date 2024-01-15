@@ -20,7 +20,7 @@ import {
 
 export const makerDeclarationDocs = (declarationList: Array<AllDeclaration>) => {
   const declarationMap = groupDeclarationByKind(declarationList);
-  let markdown = '';
+  let markdown = '## API';
 
   if (declarationMap[DECLARATION_KIND.VARIABLE]) {
     markdown += makeByVariable(declarationMap[DECLARATION_KIND.VARIABLE] as Array<VariableDeclaration>);

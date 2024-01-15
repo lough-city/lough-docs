@@ -14,7 +14,7 @@ export function parseJSDocComments(symbol: ts.Symbol, checker: ts.TypeChecker): 
       title += doc.text + '\n';
     }
   }
-  let description = '-';
+  let description = '';
   if (tags['description']) {
     // eslint-disable-next-line prefer-destructuring
     description = tags['description'];
