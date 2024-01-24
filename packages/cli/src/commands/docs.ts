@@ -50,17 +50,21 @@ const action = async (input = '', options: IOptions) => {
     writeFileSync(fileName, markdown, { encoding: 'utf-8' });
   } else {
     const fileName = join(rootDir, 'README.md');
-    const readme = readFileSync(fileName, { encoding: 'utf-8' });
-    const reg = /##\s*API([\s\S]*?)(?=\n## [^\n]+|$)/;
-
     let content = '';
-    if (reg.test(readme)) {
-      content = readme.replace(reg, markdown);
-    } else {
-      content = `${readme}\\n${markdown}`;
-    }
 
-    writeFileSync(fileName, content, { encoding: 'utf-8' });
+    if (existsSync(fileName)) {
+      const readme = readFileSync(fileName, { encoding: 'utf-8' });
+      const reg = /##\s*API([\s\S]*?)(?=\n## [^\n]+|$)/;
+
+      if (reg.test(readme)) {
+        content = readme.replace(reg, markdown);
+      } else {
+        content = readme ? `${readme}\\n${markdown}` : markdown;
+      }
+      writeFileSync(fileName, content, { encoding: 'utf-8' });
+    } else {
+      writeFileSync(fileName, markdown, { encoding: 'utf-8' });
+    }
   }
 };
 

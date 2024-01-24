@@ -9,6 +9,7 @@ import {
   TypeAliasDeclaration,
   VariableDeclaration
 } from '../../typings/declaration';
+import { ClassMemberDeclaration } from '../../typings/item';
 import { parseJSDocComments } from './comment';
 import { getNodeDeclarationKind } from './kind';
 
@@ -62,12 +63,40 @@ const getTypeAliasDeclaration = (node: ts.TypeAliasDeclaration, checker: ts.Type
   };
 };
 
-const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker): ClassDeclaration => {
+const getFunctionDeclaration = (node: ts.FunctionDeclaration, checker: ts.TypeChecker): FunctionDeclaration => {
+  const signature = checker.getSignatureFromDeclaration(node);
+  const returnType = checker.getReturnTypeOfSignature(signature!);
+
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.CLASS>(node, checker),
-    parameters: [],
-    members: node.members.map(member => {
-      const symbol = checker.getSymbolAtLocation(member.name!)!;
+    ...getDeclarationCommon<DECLARATION_KIND.FUNCTION>(node, checker),
+    parameters: node.parameters.map(param => {
+      const paramSymbol = checker.getSymbolAtLocation(param.name) as any;
+      const paramType = checker.getTypeOfSymbolAtLocation(paramSymbol, param);
+      return {
+        name: paramSymbol.name,
+        type: checker.typeToString(paramType),
+        required: !param.questionToken && !param.initializer,
+        default: param.initializer ? param.initializer.getText() : undefined,
+        comments: parseJSDocComments(paramSymbol, checker)
+      };
+    }),
+    return: checker.typeToString(returnType)
+  };
+};
+
+const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker): ClassDeclaration => {
+  let constructor;
+  const members = node.members
+    .map(member => {
+      if (ts.isConstructorDeclaration(member)) {
+        constructor = getFunctionDeclaration(member as any, checker);
+        return null;
+      }
+
+      if (!member.name) return null;
+
+      const symbol = checker.getSymbolAtLocation(member.name);
+      if (!symbol) return null;
 
       const flags: Array<string> = [];
 
@@ -103,27 +132,12 @@ const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker)
         comments: parseJSDocComments(symbol, checker)
       };
     })
-  };
-};
-
-const getFunctionDeclaration = (node: ts.FunctionDeclaration, checker: ts.TypeChecker): FunctionDeclaration => {
-  const signature = checker.getSignatureFromDeclaration(node);
-  const returnType = checker.getReturnTypeOfSignature(signature!);
+    .filter(Boolean) as Array<ClassMemberDeclaration>;
 
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.FUNCTION>(node, checker),
-    parameters: node.parameters.map(param => {
-      const paramSymbol = checker.getSymbolAtLocation(param.name) as any;
-      const paramType = checker.getTypeOfSymbolAtLocation(paramSymbol, param);
-      return {
-        name: paramSymbol.name,
-        type: checker.typeToString(paramType),
-        required: !param.questionToken && !param.initializer,
-        default: param.initializer ? param.initializer.getText() : undefined,
-        comments: parseJSDocComments(paramSymbol, checker)
-      };
-    }),
-    return: checker.typeToString(returnType)
+    ...getDeclarationCommon<DECLARATION_KIND.CLASS>(node, checker),
+    constructor: constructor,
+    members: members
   };
 };
 

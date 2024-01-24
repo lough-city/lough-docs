@@ -28,7 +28,7 @@
   },
   "scripts": {
     "build": "lough-build",
-    "dev": "npm run build && node ./es/index.js"
+    "dev": "lough-build dev"
   },
   "dependencies": {
     "@lough/npm-operate": "^0.3.0",

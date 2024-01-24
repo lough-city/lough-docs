@@ -32,7 +32,7 @@ export interface ClassDeclaration {
   kind: DECLARATION_KIND.CLASS;
   name: string;
   comments: JSDocComments;
-  parameters: Array<ParameterDeclaration>;
+  constructor?: FunctionDeclaration;
   members: Array<ClassMemberDeclaration>;
 }
 

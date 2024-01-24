@@ -86,12 +86,13 @@ ${makeMarkdownTitle('Class', 3)}
     markdown += `
 
 ${makeDeclarationTitle(declaration)}
+${makeDeclarationParameters(declaration.constructor?.parameters || [])}
+${makeDeclarationReturn(declaration.constructor?.return || '')}
 ${makeDeclarationComments(declaration.comments)}
-${makeDeclarationParameters(declaration.parameters)}
 ${makeDeclarationClassMembers(declaration.members)}
 `;
   }
-
+  // ${makeDeclarationParameters(declaration.parameters)}
   return markdown;
 };
 
