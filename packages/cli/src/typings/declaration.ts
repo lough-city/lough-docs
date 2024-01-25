@@ -4,7 +4,8 @@ import {
   ClassMemberDeclaration,
   EnumMemberDeclaration,
   InterfaceMemberDeclaration,
-  ParameterDeclaration
+  ParameterDeclaration,
+  VariableMemberDeclaration
 } from './item';
 
 export interface EnumDeclaration {
@@ -49,6 +50,7 @@ export interface VariableDeclaration {
   name: string;
   comments: JSDocComments;
   type: string;
+  members?: Array<VariableMemberDeclaration>;
 }
 
 export type AllDeclaration =

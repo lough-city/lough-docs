@@ -4,5 +4,5 @@ export default defineConfig({
   external: ['@lough/npm-operate', 'chalk', 'commander', 'execa', 'inquirer', 'ora', 'typescript'],
   terser: false,
   style: false,
-  input: 'src/index.ts'
+  input: ['src/bin.ts', 'src/index.ts']
 });

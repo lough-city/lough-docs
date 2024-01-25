@@ -18,7 +18,7 @@ const getDeclarationCommon = <T = DECLARATION_KIND>(node: ts.Node, checker: ts.T
 
   return {
     kind: getNodeDeclarationKind(node) as T,
-    name: symbol?.name || '',
+    name: (ts.isIdentifier((node as any).name) ? (node as any).name.text : symbol?.name) || '',
     comments: symbol ? parseJSDocComments(symbol, checker) : { title: '', description: '', tags: {} }
   };
 };
@@ -63,12 +63,19 @@ const getTypeAliasDeclaration = (node: ts.TypeAliasDeclaration, checker: ts.Type
   };
 };
 
-const getFunctionDeclaration = (node: ts.FunctionDeclaration, checker: ts.TypeChecker): FunctionDeclaration => {
+const getFunctionDeclaration = (
+  node: ts.FunctionDeclaration | ts.ArrowFunction | ts.FunctionExpression,
+  checker: ts.TypeChecker
+): FunctionDeclaration => {
   const signature = checker.getSignatureFromDeclaration(node);
   const returnType = checker.getReturnTypeOfSignature(signature!);
 
+  const commonResult = getDeclarationCommon<DECLARATION_KIND.FUNCTION>(node, checker);
+
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.FUNCTION>(node, checker),
+    kind: DECLARATION_KIND.FUNCTION,
+    name: commonResult.name || 'anonymous function',
+    comments: commonResult.comments,
     parameters: node.parameters.map(param => {
       const paramSymbol = checker.getSymbolAtLocation(param.name) as any;
       const paramType = checker.getTypeOfSymbolAtLocation(paramSymbol, param);
@@ -146,13 +153,53 @@ const getVariableDeclaration = (node: ts.VariableDeclaration, checker: ts.TypeCh
     node = (node as ts.VariableStatement).declarationList.declarations[0];
   }
 
-  const symbol = checker.getSymbolAtLocation(node.name)!;
+  const commonInfo = getDeclarationCommon<DECLARATION_KIND.VARIABLE>(node, checker);
+
+  if (node.initializer) {
+    const type = checker.getTypeAtLocation(node.initializer);
+
+    if (ts.isObjectLiteralExpression(node.initializer)) {
+      return {
+        ...commonInfo,
+        type: 'Object',
+        members: node.initializer.properties.map(prop => {
+          let propName = '';
+          let propType = 'any';
+
+          if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
+            propName = prop.name.text;
+            propType = checker.typeToString(checker.getTypeAtLocation(prop.initializer));
+          } else if (ts.isShorthandPropertyAssignment(prop)) {
+            // 处理属性简写
+            propName = prop.name.text;
+            const symbol = checker.getSymbolAtLocation(prop.name);
+            propType = symbol ? checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, prop)) : 'unknown';
+          }
+
+          return {
+            name: propName,
+            type: propType,
+            comments: parseJSDocComments(checker.getSymbolAtLocation(prop.name!)!, checker)
+          };
+        })
+      };
+    } else if (ts.isArrowFunction(node.initializer) || ts.isFunctionExpression(node.initializer)) {
+      return {
+        ...getFunctionDeclaration(node.initializer, checker),
+        name: commonInfo.name,
+        comments: commonInfo.comments
+      } as any;
+    }
+
+    return {
+      ...commonInfo,
+      type: checker.typeToString(type)
+    };
+  }
 
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.VARIABLE>(node, checker),
-    type: symbol
-      ? checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration || node))
-      : 'any'
+    ...commonInfo,
+    type: 'any'
   };
 };
 

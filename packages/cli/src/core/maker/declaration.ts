@@ -129,6 +129,7 @@ ${makeMarkdownTitle('Variable', 3)}
 ${makeDeclarationTitle(declaration)}
 ${makeDeclarationType(declaration.type)}
 ${makeDeclarationComments(declaration.comments)}
+${declaration.members ? makDeclarationInterfaceMembers(declaration.members) : ''}
 `;
   }
 

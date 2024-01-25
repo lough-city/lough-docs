@@ -5,8 +5,14 @@ import { parseTypeScriptProject } from '../core/parser';
 import { loadExtendedConfig } from '../utils/typescript';
 
 interface IOptions {
-  mode: 'mounted' | 'independent';
+  saveMode: 'independent' | 'mounted';
+  projectType: 'default' | 'cli';
 }
+// 普通项目 正常api导出
+// cli 项目 正常api导出，同时导出 commands/index.ts 命令文档
+// 方案1：新增指定cli目录
+// 方案2：新增 cli命令 lough-docs cli --input
+// 方案3：自动识别项目 bin 检测对应载点，可以指定
 
 // TODO: 一些待实现
 // 1. 进度展示
@@ -17,9 +23,15 @@ interface IOptions {
 // 4. 文档内跳转
 // 5. location
 
+// TODO: 新增 cli 场景文档
+// TODO: 脚手架标准化改造
+
 const action = async (input = '', options: IOptions) => {
-  const { mode } = options;
+  const { saveMode, projectType } = options;
   const rootDir = process.cwd();
+
+  // TODO: projectType === 'cli' 时，在原有基础上 额外处理 commands 文档，挂载 ## CMD，独立 CMD.md
+  // 分两个流程 可以执行两次 而不一次 便于组合
 
   if (input) {
     input = join(rootDir, input);
@@ -44,7 +56,7 @@ const action = async (input = '', options: IOptions) => {
 
   const markdown = makerDeclarationDocs(declarationList);
 
-  if (mode === 'independent') {
+  if (saveMode === 'independent') {
     const fileName = join(rootDir, 'API.md');
 
     writeFileSync(fileName, markdown, { encoding: 'utf-8' });

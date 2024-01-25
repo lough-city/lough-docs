@@ -26,3 +26,5 @@ export interface ClassMemberDeclaration {
   flags: Array<string>;
   comments: JSDocComments;
 }
+
+export interface VariableMemberDeclaration extends InterfaceMemberDeclaration {}
