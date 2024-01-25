@@ -3,7 +3,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { Package } from '@lough/npm-operate';
 import { program } from 'commander';
-import docs from './commands/docs';
+import docs from './commands';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,3 +23,6 @@ function start() {
 }
 
 start();
+
+// TODO: 1.动态读取 commands
+// TODO: 2.参数、选项配置化
