@@ -1,12 +1,12 @@
-import { LINE_BREAK } from '../../constants';
-import { JSDocComments } from '../../typings/comment';
-import { AllDeclaration } from '../../typings/declaration';
+import { LINE_BREAK } from '../../../../constants';
+import { JSDocComments } from '../../../../typings/comment';
+import { AllDeclaration } from '../../../../typings/declaration';
 import {
   ClassMemberDeclaration,
   EnumMemberDeclaration,
   InterfaceMemberDeclaration,
   ParameterDeclaration
-} from '../../typings/item';
+} from '../../../../typings/item';
 import { makeMarkdownTitle } from './markdown';
 
 export const makeDeclarationTitle = (declaration: AllDeclaration) => {

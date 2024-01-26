@@ -1,28 +1,39 @@
 #!/usr/bin/env node
+import { readdirSync } from 'fs';
 import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { Package } from '@lough/npm-operate';
-import { program } from 'commander';
-import docs from './commands';
+import { Command, program } from 'commander';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-function start() {
+const loadCommands = async (program: Command) => {
+  const commandsDir = join(__dirname, 'commands');
+  const list = readdirSync(commandsDir).filter(file => file.includes('.js'));
+
+  for (const file of list) {
+    const command = (await import(pathToFileURL(join(commandsDir, file)).href)).default;
+
+    const cmd = command.name ? program.command(command.name) : program;
+
+    cmd.description(command.description);
+
+    command.options.forEach((option: [string, string, string]) => {
+      cmd.option(...option);
+    });
+
+    cmd.action(command.action);
+  }
+};
+
+async function start() {
   const npm = new Package({ dirName: join(__dirname, '..') });
   program.version(npm.version);
 
-  program
-    .description(docs.description)
-    .argument('[input]', 'input file.')
-    .option('-sm, --saveMode [string]', 'independent mounted', 'independent')
-    .option('-pt, --projectType [string]', 'default cli', 'default')
-    .action(docs.action);
+  await loadCommands(program);
 
   program.parseAsync(process.argv);
 }
 
 start();
-
-// TODO: 1.动态读取 commands
-// TODO: 2.参数、选项配置化

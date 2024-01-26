@@ -1,4 +1,4 @@
-import { DECLARATION_KIND } from '../../constants/declaration';
+import { DECLARATION_KIND } from '../../../../constants/declaration';
 import {
   AllDeclaration,
   ClassDeclaration,
@@ -7,7 +7,7 @@ import {
   InterfaceDeclaration,
   TypeAliasDeclaration,
   VariableDeclaration
-} from '../../typings/declaration';
+} from '../../../../typings/declaration';
 import { groupDeclarationByKind } from '../parser';
 import {
   makeByClass,

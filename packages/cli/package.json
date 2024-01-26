@@ -31,10 +31,10 @@
     "dev": "lough-build dev"
   },
   "dependencies": {
+    "@logically/coding-model": "^0.1.3",
     "@lough/npm-operate": "^0.3.0",
     "chalk": "4.1.2",
     "commander": "^10.0.0",
-    "comment-parser": "^1.4.0",
     "execa": "^5.1.1",
     "inquirer": "^8.2.4",
     "ora": "5.4.1",

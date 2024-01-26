@@ -1,3 +1,6 @@
+/**
+ * 生成类型
+ */
 export enum GENERATE_TYPE {
   /**
    * API文档

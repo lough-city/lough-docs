@@ -1,9 +1,44 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { LifeCycle } from '@logically/coding-model';
 import { AllDeclaration } from '../../typings/declaration';
 import { GENERATE_TYPE } from './const';
 import { makerDeclarationDocs } from './core/maker';
 import { parseTypeScriptProject } from './core/parser';
+
+/**
+ * 生成流生命周期
+ */
+export interface GenerateFlowLifeCycle extends Record<string, (...args: any) => any> {
+  /**
+   * 解析开始
+   */
+  parse: () => any;
+  /**
+   * 解析中
+   */
+  parsing: (filePath: string) => any;
+  /**
+   * 解析结束
+   */
+  parsed: () => any;
+  /**
+   * 制作开始
+   */
+  make: () => any;
+  /**
+   * 制作结束
+   */
+  made: () => any;
+  /**
+   * 保存结束
+   */
+  save: () => any;
+  /**
+   * 保存结束
+   */
+  saved: (filePath: string) => any;
+}
 
 /**
  * 生成流参数
@@ -14,7 +49,7 @@ export interface GenerateFlowParameters {
    */
   type: GENERATE_TYPE;
   /**
-   * 入口文件
+   * 入口文件或目录
    * @description 完整路径
    */
   input: string;
@@ -23,20 +58,30 @@ export interface GenerateFlowParameters {
    * @description 完整路径
    */
   output: string;
+  /**
+   * 生命周期
+   */
+  cycle?: GenerateFlowLifeCycle;
 }
 
 /**
  * 生成流
  */
 export class GenerateFlow {
-  private options: GenerateFlowParameters;
+  private options: Omit<GenerateFlowParameters, 'cycle'>;
+
+  private cycle = new LifeCycle<GenerateFlowLifeCycle>();
 
   private get typeLabel() {
     return this.options.type === GENERATE_TYPE.api ? 'API' : 'CMD';
   }
 
   constructor(parameters: GenerateFlowParameters) {
-    this.options = parameters;
+    const { cycle, ..._parameters } = parameters;
+
+    if (cycle) this.cycle.on(cycle);
+
+    this.options = _parameters;
   }
 
   /**
@@ -44,7 +89,21 @@ export class GenerateFlow {
    * @returns 类型描述列表
    */
   parse() {
-    return parseTypeScriptProject(this.options.input) || [];
+    const { input } = this.options;
+    const inputList = lstatSync(input).isDirectory() ? readdirSync(input).map(file => join(input, file)) : [input];
+
+    this.cycle.emit('parse');
+
+    const declarationList = [];
+
+    for (const _input of inputList) {
+      const list = parseTypeScriptProject(_input, filePath => this.cycle.emit('parsing', filePath)) || [];
+      declarationList.push(...list);
+    }
+
+    this.cycle.emit('parsed');
+
+    return declarationList;
   }
 
   /**
@@ -52,29 +111,40 @@ export class GenerateFlow {
    * @returns 文档
    */
   make(declarationList: Array<AllDeclaration>) {
-    return `## ${this.typeLabel}` + makerDeclarationDocs(declarationList);
+    this.cycle.emit('make');
+
+    const markdown = `## ${this.typeLabel}\n\n` + makerDeclarationDocs(declarationList);
+
+    this.cycle.emit('made');
+
+    return markdown;
   }
 
   /**
    * 保存文件
    */
   save(markdown: string) {
-    const fileName = join(this.options.output, 'README.md');
+    const filePath = this.options.output;
     let content = '';
 
-    if (existsSync(fileName)) {
-      const readme = readFileSync(fileName, { encoding: 'utf-8' });
-      const reg = new RegExp(`##\s*${this.typeLabel}([\s\S]*?)(?=\n## [^\n]+|$)`);
+    this.cycle.emit('save');
+
+    if (existsSync(filePath)) {
+      const readme = readFileSync(filePath, { encoding: 'utf-8' });
+      const reg = new RegExp(`##\\s*${this.typeLabel}([\\s\\S]*?)(?=\\n## [^\\n]+|$)`);
 
       if (reg.test(readme)) {
         content = readme.replace(reg, markdown);
       } else {
-        content = readme ? `${readme}\\n${markdown}` : markdown;
+        content = readme ? `${readme}\n${markdown}` : markdown;
       }
-      writeFileSync(fileName, content, { encoding: 'utf-8' });
+
+      writeFileSync(filePath, content, { encoding: 'utf-8' });
     } else {
-      writeFileSync(fileName, markdown, { encoding: 'utf-8' });
+      writeFileSync(filePath, markdown, { encoding: 'utf-8' });
     }
+
+    this.cycle.emit('saved', filePath);
   }
 
   /**
@@ -86,3 +156,5 @@ export class GenerateFlow {
     this.save(markdown);
   }
 }
+
+export * from './const';

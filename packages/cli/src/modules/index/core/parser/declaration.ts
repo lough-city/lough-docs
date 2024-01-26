@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { DECLARATION_KIND } from '../../constants/declaration';
+import { DECLARATION_KIND } from '../../../../constants/declaration';
 import {
   AllDeclaration,
   ClassDeclaration,
@@ -8,24 +8,24 @@ import {
   InterfaceDeclaration,
   TypeAliasDeclaration,
   VariableDeclaration
-} from '../../typings/declaration';
-import { ClassMemberDeclaration } from '../../typings/item';
+} from '../../../../typings/declaration';
+import { ClassMemberDeclaration } from '../../../../typings/item';
 import { parseJSDocComments } from './comment';
 import { getNodeDeclarationKind } from './kind';
 
-const getDeclarationCommon = <T = DECLARATION_KIND>(node: ts.Node, checker: ts.TypeChecker) => {
+const getDeclarationCommon = <T extends DECLARATION_KIND>(kind: T, node: ts.Node, checker: ts.TypeChecker) => {
   const symbol = checker.getSymbolAtLocation((node as any).name)!;
 
   return {
-    kind: getNodeDeclarationKind(node) as T,
-    name: (ts.isIdentifier((node as any).name) ? (node as any).name.text : symbol?.name) || '',
+    kind: kind,
+    name: ((node as any).name && ts.isIdentifier((node as any).name) ? (node as any).name.text : symbol?.name) || '',
     comments: symbol ? parseJSDocComments(symbol, checker) : { title: '', description: '', tags: {} }
   };
 };
 
 const getEnumDeclaration = (node: ts.EnumDeclaration, checker: ts.TypeChecker): EnumDeclaration => {
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.ENUM>(node, checker),
+    ...getDeclarationCommon(DECLARATION_KIND.ENUM, node, checker),
     members: node.members.map(member => {
       return {
         name: member.name.getText(),
@@ -41,7 +41,7 @@ const getInterfaceDeclaration = (node: ts.InterfaceDeclaration, checker: ts.Type
   const type = checker.getDeclaredTypeOfSymbol(symbol);
 
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.INTERFACE>(node, checker),
+    ...getDeclarationCommon(DECLARATION_KIND.INTERFACE, node, checker),
     members: type.getProperties().map(prop => {
       const propType = checker.getTypeOfSymbolAtLocation(prop, prop.valueDeclaration as any);
       return {
@@ -58,7 +58,7 @@ const getTypeAliasDeclaration = (node: ts.TypeAliasDeclaration, checker: ts.Type
   const type = checker.getDeclaredTypeOfSymbol(symbol);
 
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.TYPE_ALIAS>(node, checker),
+    ...getDeclarationCommon(DECLARATION_KIND.TYPE_ALIAS, node, checker),
     type: checker.typeToString(type)
   };
 };
@@ -70,7 +70,7 @@ const getFunctionDeclaration = (
   const signature = checker.getSignatureFromDeclaration(node);
   const returnType = checker.getReturnTypeOfSignature(signature!);
 
-  const commonResult = getDeclarationCommon<DECLARATION_KIND.FUNCTION>(node, checker);
+  const commonResult = getDeclarationCommon(DECLARATION_KIND.FUNCTION, node, checker);
 
   return {
     kind: DECLARATION_KIND.FUNCTION,
@@ -114,7 +114,8 @@ const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker)
 
       // scope
       if (ts.getCombinedModifierFlags(member) & ts.ModifierFlags.Private) {
-        flags.push('private');
+        return null;
+        // flags.push('private');
       }
       if (ts.getCombinedModifierFlags(member) & ts.ModifierFlags.Protected) {
         flags.push('protected');
@@ -142,7 +143,7 @@ const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker)
     .filter(Boolean) as Array<ClassMemberDeclaration>;
 
   return {
-    ...getDeclarationCommon<DECLARATION_KIND.CLASS>(node, checker),
+    ...getDeclarationCommon(DECLARATION_KIND.CLASS, node, checker),
     constructor: constructor,
     members: members
   };
@@ -153,7 +154,7 @@ const getVariableDeclaration = (node: ts.VariableDeclaration, checker: ts.TypeCh
     node = (node as ts.VariableStatement).declarationList.declarations[0];
   }
 
-  const commonInfo = getDeclarationCommon<DECLARATION_KIND.VARIABLE>(node, checker);
+  const commonInfo = getDeclarationCommon(DECLARATION_KIND.VARIABLE, node, checker);
 
   if (node.initializer) {
     const type = checker.getTypeAtLocation(node.initializer);

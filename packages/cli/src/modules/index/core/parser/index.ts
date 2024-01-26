@@ -1,19 +1,21 @@
 import { basename, extname } from 'path';
 import ts from 'typescript';
-import { DECLARATION_KIND } from '../../constants/declaration';
-import { AllDeclaration } from '../../typings/declaration';
-import { resolveModulePath } from '../../utils/path';
-import { parseTypeScriptPath } from '../../utils/typescript';
+import { DECLARATION_KIND } from '../../../../constants/declaration';
+import { AllDeclaration } from '../../../../typings/declaration';
+import { resolveModulePath } from '../../../../utils/path';
+import { parseTypeScriptPath } from '../../../../utils/typescript';
 import { createVirtualVariableDeclarationForExportAssignment } from './create';
 import { getNodeDeclaration } from './declaration';
 import { isNodeExported } from './export';
 
-export const parseTypeScriptProject = (path: string) => {
+export const parseTypeScriptProject = (path: string, parsing?: (filePath: string) => any) => {
   const { checker, sourceFile } = parseTypeScriptPath(path);
   if (!sourceFile) {
     console.warn('Missing sourceFile for:', path);
     return;
   }
+
+  parsing?.(path);
 
   const declarationList: Array<AllDeclaration> = [];
 
@@ -24,7 +26,7 @@ export const parseTypeScriptProject = (path: string) => {
         const resolvedModulePath = resolveModulePath(path, moduleSpecifierText);
 
         if (resolvedModulePath) {
-          let list = parseTypeScriptProject(resolvedModulePath) || [];
+          let list = parseTypeScriptProject(resolvedModulePath, parsing) || [];
 
           if (node.exportClause && ts.isNamedExports(node.exportClause)) {
             const exportedNames = node.exportClause.elements.map(e => e.name.text);
