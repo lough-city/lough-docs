@@ -1,6 +1,7 @@
 import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { LifeCycle } from '@logically/coding-model';
+import { LINE_BREAK } from '../../constants';
 import { AllDeclaration } from '../../typings/declaration';
 import { GENERATE_TYPE } from './const';
 import { makerDeclarationDocs } from './core/maker';
@@ -94,7 +95,7 @@ export class GenerateFlow {
 
     this.cycle.emit('parse');
 
-    const declarationList = [];
+    const declarationList: Array<AllDeclaration> = [];
 
     for (const _input of inputList) {
       const list = parseTypeScriptProject(_input, filePath => this.cycle.emit('parsing', filePath)) || [];
@@ -136,7 +137,7 @@ export class GenerateFlow {
       if (reg.test(readme)) {
         content = readme.replace(reg, markdown);
       } else {
-        content = readme ? `${readme}\n${markdown}` : markdown;
+        content = readme ? `${readme}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${markdown}` : markdown;
       }
 
       writeFileSync(filePath, content, { encoding: 'utf-8' });

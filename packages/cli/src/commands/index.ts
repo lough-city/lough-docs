@@ -33,10 +33,14 @@ const action = async (options: GenerateFlowParameters) => {
   if (input) {
     input = join(rootDir, input);
   } else {
-    const tsconfigPath = join(rootDir, 'tsconfig.json');
-    if (existsSync(tsconfigPath)) {
-      const parsedConfig = loadExtendedConfig(tsconfigPath);
-      input = parsedConfig.fileNames[0];
+    if (type === GENERATE_TYPE.api) {
+      const tsconfigPath = join(rootDir, 'tsconfig.json');
+      if (existsSync(tsconfigPath)) {
+        const parsedConfig = loadExtendedConfig(tsconfigPath);
+        input = parsedConfig.fileNames[0];
+      }
+    } else {
+      input = join(rootDir, 'src/commands');
     }
   }
 
@@ -87,8 +91,11 @@ export default {
   description: 'generate docs by typescript.',
   options: [
     ['-t, --type [string]', 'generate type: api | cmd', 'api'],
-    ['-i, --input [string]', 'generate file input directory or typescript file, default is tsconfig input.'],
-    ['-i, --input [string]', 'generate file output directory or markdown file, default is README.md.']
+    [
+      '-i, --input [string]',
+      'generate file input directory or typescript file, if type is api default is tsconfig input, else default is src/commands.'
+    ],
+    ['-o, --output [string]', 'generate file output directory or markdown file, default is README.md.']
   ],
   action
 };

@@ -67,6 +67,10 @@ const getFunctionDeclaration = (
   node: ts.FunctionDeclaration | ts.ArrowFunction | ts.FunctionExpression,
   checker: ts.TypeChecker
 ): FunctionDeclaration => {
+  if (ts.isVariableStatement(node)) {
+    node = (node as ts.VariableStatement).declarationList.declarations[0].initializer as ts.FunctionExpression;
+  }
+
   const signature = checker.getSignatureFromDeclaration(node);
   const returnType = checker.getReturnTypeOfSignature(signature!);
 
@@ -149,6 +153,7 @@ const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker)
   };
 };
 
+// TODO: 剔除函数， 处理所有字面量 Literal，深度处理 Object 以及 Array 类型
 const getVariableDeclaration = (node: ts.VariableDeclaration, checker: ts.TypeChecker): VariableDeclaration => {
   if (ts.isVariableStatement(node)) {
     node = (node as ts.VariableStatement).declarationList.declarations[0];
@@ -156,51 +161,61 @@ const getVariableDeclaration = (node: ts.VariableDeclaration, checker: ts.TypeCh
 
   const commonInfo = getDeclarationCommon(DECLARATION_KIND.VARIABLE, node, checker);
 
-  if (node.initializer) {
-    const type = checker.getTypeAtLocation(node.initializer);
-
-    if (ts.isObjectLiteralExpression(node.initializer)) {
-      return {
-        ...commonInfo,
-        type: 'Object',
-        members: node.initializer.properties.map(prop => {
-          let propName = '';
-          let propType = 'any';
-
-          if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
-            propName = prop.name.text;
-            propType = checker.typeToString(checker.getTypeAtLocation(prop.initializer));
-          } else if (ts.isShorthandPropertyAssignment(prop)) {
-            // 处理属性简写
-            propName = prop.name.text;
-            const symbol = checker.getSymbolAtLocation(prop.name);
-            propType = symbol ? checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, prop)) : 'unknown';
-          }
-
-          return {
-            name: propName,
-            type: propType,
-            comments: parseJSDocComments(checker.getSymbolAtLocation(prop.name!)!, checker)
-          };
-        })
-      };
-    } else if (ts.isArrowFunction(node.initializer) || ts.isFunctionExpression(node.initializer)) {
-      return {
-        ...getFunctionDeclaration(node.initializer, checker),
-        name: commonInfo.name,
-        comments: commonInfo.comments
-      } as any;
-    }
-
+  if (!node.initializer) {
     return {
       ...commonInfo,
-      type: checker.typeToString(type)
+      type: 'any'
+    };
+  }
+
+  const type = checker.getTypeAtLocation(node.initializer);
+
+  if (ts.isObjectLiteralExpression(node.initializer)) {
+    return {
+      ...commonInfo,
+      type: 'Object',
+      members: node.initializer.properties.map(prop => {
+        let propName = '';
+        let propType = 'any';
+
+        if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
+          propName = prop.name.text;
+          if (ts.isArrayLiteralExpression(prop.initializer)) {
+            // 处理元组类型
+            propType = prop.initializer.elements
+              .map(element => {
+                if (ts.isArrayLiteralExpression(element)) {
+                  // 处理内层数组
+                  return `\`${element.elements
+                    .map(innerElement => checker.typeToString(checker.getTypeAtLocation(innerElement)))
+                    .join(', ')}\``;
+                } else {
+                  // 处理单个元素
+                  return checker.typeToString(checker.getTypeAtLocation(element));
+                }
+              })
+              .join(`<br />`);
+          } else {
+            propType = checker.typeToString(checker.getTypeAtLocation(prop.initializer));
+          }
+        } else if (ts.isShorthandPropertyAssignment(prop)) {
+          propName = prop.name.text;
+          const symbol = checker.getSymbolAtLocation(prop.name);
+          propType = symbol ? checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, prop)) : 'unknown';
+        }
+
+        return {
+          name: propName,
+          type: propType,
+          comments: parseJSDocComments(checker.getSymbolAtLocation(prop.name!)!, checker)
+        };
+      })
     };
   }
 
   return {
     ...commonInfo,
-    type: 'any'
+    type: checker.typeToString(type)
   };
 };
 

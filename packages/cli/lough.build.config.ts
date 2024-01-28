@@ -13,5 +13,5 @@ export default defineConfig({
   ],
   terser: false,
   style: false,
-  input: ['src/commands', 'src/bin.ts', 'src/index.ts']
+  input: ['src/index.ts', 'src/bin.ts', 'src/commands']
 });
