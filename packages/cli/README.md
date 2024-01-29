@@ -1,4 +1,56 @@
+# @lough/docs-cli
+
+> This is a Docs tool docked in lough.
+
+
+
+## CMD
+
+- **lough-docs**
+
+
+
+### Variable
+
+
+
+#### main 
+
+**type**: `Object`
+
+
+**members**
+
+| 属性 | 说明   | 类型    |
+| ---- | ---- | ------- |
+| description    | -  | "generate docs by typescript." |
+| options    | -  | `"-t, --type [string]", "generate type: api | cmd", "api"`<br />`"-i, --input [string]", "generate file input directory or typescript file, if type is api default is tsconfig input, else default is src/commands."`<br />`"-o, --output [string]", "generate file output directory or markdown file, default is README.md."` |
+| action    | -  | (options: GenerateFlowParameters) => Promise<void> |
+
+
+
+### Interface
+
+
+
+#### GenerateOptions 生成流参数
+
+
+**members**
+
+| 属性 | 说明   | 类型    |
+| ---- | ---- | ------- |
+| type    | 生成类型  | GENERATE_TYPE |
+| input    | 入口文件或目录  相对于 `process.cwd()`  | string |
+| output    | 输出文件或目录  相对于 `process.cwd()`  | string |
+
+
+
+
+
 ## API
+
+- **lough-docs**
 
 
 
@@ -61,7 +113,7 @@
 | make    | 制作开始  | () => any |
 | made    | 制作结束  | () => any |
 | save    | 保存结束  | () => any |
-| saved    | 保存结束  | (filePath: string) => any |
+| saved    | 保存开始  | (filePath: string) => any |
 
 
 
@@ -76,44 +128,4 @@
 | input    | 入口文件或目录  完整路径  | string |
 | output    | 输出目录  完整路径  | string |
 | cycle    | 生命周期  | GenerateFlowLifeCycle |
-
-
-
-## CMD
-
-
-
-### Variable
-
-
-
-#### index 
-
-**type**: `Object`
-
-
-**members**
-
-| 属性 | 说明   | 类型    |
-| ---- | ---- | ------- |
-| description    | -  | "generate docs by typescript." |
-| options    | -  | `"-t, --type [string]", "generate type: api | cmd", "api"`<br />`"-i, --input [string]", "generate file input directory or typescript file, if type is api default is tsconfig input, else default is src/commands."`<br />`"-o, --output [string]", "generate file output directory or markdown file, default is README.md."` |
-| action    | -  | (options: GenerateFlowParameters) => Promise<void> |
-
-
-
-### Interface
-
-
-
-#### GenerateOptions 生成流参数
-
-
-**members**
-
-| 属性 | 说明   | 类型    |
-| ---- | ---- | ------- |
-| type    | 生成类型  | GENERATE_TYPE |
-| input    | 入口文件或目录  相对于 process.cwd()  | string |
-| output    | 输出文件或目录  相对于 process.cwd()  | string |
 

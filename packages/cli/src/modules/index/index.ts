@@ -1,6 +1,7 @@
 import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { LifeCycle } from '@logically/coding-model';
+import { Package } from '@lough/npm-operate';
 import { LINE_BREAK } from '../../constants';
 import { AllDeclaration } from '../../typings/declaration';
 import { GENERATE_TYPE } from './const';
@@ -36,7 +37,7 @@ export interface GenerateFlowLifeCycle extends Record<string, (...args: any) => 
    */
   save: () => any;
   /**
-   * 保存结束
+   * 保存开始
    */
   saved: (filePath: string) => any;
 }
@@ -73,6 +74,8 @@ export class GenerateFlow {
 
   private cycle = new LifeCycle<GenerateFlowLifeCycle>();
 
+  private npm: Package;
+
   private get typeLabel() {
     return this.options.type === GENERATE_TYPE.api ? 'API' : 'CMD';
   }
@@ -83,6 +86,8 @@ export class GenerateFlow {
     if (cycle) this.cycle.on(cycle);
 
     this.options = _parameters;
+
+    this.npm = new Package();
   }
 
   /**
@@ -114,7 +119,15 @@ export class GenerateFlow {
   make(declarationList: Array<AllDeclaration>) {
     this.cycle.emit('make');
 
-    const markdown = `## ${this.typeLabel}\n\n` + makerDeclarationDocs(declarationList);
+    const config = this.npm.readConfig();
+
+    let binCmd = '';
+    if (typeof config.bin === 'object') {
+      binCmd = Object.keys(config.bin)[0];
+    }
+
+    const markdown =
+      `## ${this.typeLabel}\n\n` + (binCmd ? `- **${binCmd}**\n\n` : '') + makerDeclarationDocs(declarationList);
 
     this.cycle.emit('made');
 
@@ -140,9 +153,24 @@ export class GenerateFlow {
         content = readme ? `${readme}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${markdown}` : markdown;
       }
 
+      const config = this.npm.readConfig();
+      if (!content.includes(`# ${config.name}`)) {
+        content =
+          `# ${config.name}${LINE_BREAK}${LINE_BREAK}> ${config.description}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}` +
+          content;
+      }
+
       writeFileSync(filePath, content, { encoding: 'utf-8' });
     } else {
-      writeFileSync(filePath, markdown, { encoding: 'utf-8' });
+      const config = this.npm.readConfig();
+
+      writeFileSync(
+        filePath,
+        `# ${config.name}${LINE_BREAK}${LINE_BREAK}> ${config.description}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${markdown}`,
+        {
+          encoding: 'utf-8'
+        }
+      );
     }
 
     this.cycle.emit('saved', filePath);

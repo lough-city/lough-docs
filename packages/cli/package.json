@@ -28,7 +28,8 @@
   },
   "scripts": {
     "build": "lough-build",
-    "dev": "lough-build dev"
+    "dev": "lough-build dev",
+    "docs": "lough-docs --type=cmd && lough-docs"
   },
   "dependencies": {
     "@logically/coding-model": "^0.1.5",
@@ -41,7 +42,7 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@lough/build-cli": "^0.3.1",
+    "@lough/build-cli": "^0.3.2",
     "@types/node": "^20.10.5",
     "ts-node": "^10.9.1"
   },

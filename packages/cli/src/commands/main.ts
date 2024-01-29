@@ -15,12 +15,12 @@ export interface GenerateOptions {
   type: GENERATE_TYPE;
   /**
    * 入口文件或目录
-   * @description 相对于 process.cwd()
+   * @description 相对于 `process.cwd()`
    */
   input: string;
   /**
    * 输出文件或目录
-   * @description 相对于 process.cwd()
+   * @description 相对于 `process.cwd()`
    */
   output: string;
 }
