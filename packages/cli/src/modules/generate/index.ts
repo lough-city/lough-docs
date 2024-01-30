@@ -11,7 +11,7 @@ import { parseTypeScriptProject } from './core/parser';
 /**
  * 生成流生命周期
  */
-export interface GenerateFlowLifeCycle extends Record<string, (...args: any) => any> {
+export interface GenerateFlowLifeCycle {
   /**
    * 解析开始
    */
@@ -122,9 +122,12 @@ export class GenerateFlow {
     const config = this.npm.readConfig();
 
     let binCmd = '';
-    if (typeof config.bin === 'object') {
+    if (this.options.type === GENERATE_TYPE.api && typeof config.bin === 'object') {
       binCmd = Object.keys(config.bin)[0];
     }
+
+    // TODO: declarationList 排序，declarationList[0].name === 'main' 最前
+    // TODO: 优化显示
 
     const markdown =
       `## ${this.typeLabel}\n\n` +

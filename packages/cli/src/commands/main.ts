@@ -6,7 +6,7 @@ import { startLoadingSpinner, succeedLoadingSpinner, textLoadingSpinner } from '
 import { loadExtendedConfig } from '../utils/typescript';
 
 /**
- * 生成流参数
+ * 生成选项
  */
 export interface GenerateOptions {
   /**
@@ -18,13 +18,13 @@ export interface GenerateOptions {
    * 入口文件或目录
    * @description 相对于 `process.cwd()`
    */
-  input: string;
+  input?: string;
   /**
    * 输出文件或目录
    * @description 相对于 `process.cwd()`
    * @default `README.md`
    */
-  output: string;
+  output?: string;
   /**
    * 静默
    * @description 是否开启静默模式
@@ -33,6 +33,9 @@ export interface GenerateOptions {
   quite: boolean;
 }
 
+/**
+ * 生成文档
+ */
 const action = async (options: GenerateOptions) => {
   const { type: types, quite } = options;
   const rootDir = process.cwd();
@@ -48,6 +51,8 @@ const action = async (options: GenerateOptions) => {
         if (existsSync(tsconfigPath)) {
           const parsedConfig = loadExtendedConfig(tsconfigPath);
           input = parsedConfig.fileNames[0];
+        } else {
+          input = '';
         }
       } else {
         input = join(rootDir, 'src/commands');
@@ -72,25 +77,25 @@ const action = async (options: GenerateOptions) => {
       cycle: quite
         ? undefined
         : {
-            parse: () => {
+            parse() {
               startLoadingSpinner(`${type} parse: start`);
             },
-            parsing: (filePath: string) => {
+            parsing(filePath: string) {
               textLoadingSpinner(`${type} parse: ${filePath}`);
             },
-            parsed: () => {
+            parsed() {
               succeedLoadingSpinner(`${type} parse: succeed`);
             },
-            make: () => {
+            make() {
               startLoadingSpinner(`${type} make: start`);
             },
-            made: () => {
+            made() {
               succeedLoadingSpinner(`${type} make: succeed`);
             },
-            save: () => {
+            save() {
               startLoadingSpinner(`${type} save: start`);
             },
-            saved: (filePath: string) => {
+            saved(filePath: string) {
               succeedLoadingSpinner(`${type} save: succeed ${filePath}`);
             }
           }

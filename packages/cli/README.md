@@ -14,6 +14,22 @@
 
 
 
+#### init 
+
+**type**: `Object`
+
+
+**members**
+
+| 属性 | 说明 | 类型 |
+| ---- | ---- | ------- |
+| name | - | `"init"` |
+| description | - | `"init lough-docs in project."` |
+| options | - | ``"-pt, --projectType [string]", string, PROJECT_TYPE.classLib`<br />`"-q, --quite [boolean]", "execute the program silently.", false`` |
+| action | - | `(options: InitOptions) => Promise<void>` |
+
+
+
 #### main 
 
 **type**: `Object`
@@ -33,7 +49,19 @@
 
 
 
-#### GenerateOptions 生成流参数
+#### InitOptions 初始化选项
+
+
+**members**
+
+| 属性 | 说明 | 类型 |
+| ---- | ---- | ------- |
+| projectType | 项目类型 | `PROJECT_TYPE` |
+| quite | 静默  是否开启静默模式 | `boolean` |
+
+
+
+#### GenerateOptions 生成选项
 
 
 **members**
@@ -79,6 +107,27 @@
 
 
 
+#### InitFlow 初始化流
+
+**parameters**
+
+| 属性 | 说明 | 必传 | 类型 | 默认值 |
+| ---- | ----- | ---- | -------- | ------ |
+| parameters | - | 是 | `InitFlowParameters` | - |
+
+**returns**: `InitFlow`
+
+
+**members**
+
+| 属性 | 说明 | 类型 | 标记 |
+| ---- | ----- | -------- | -------- |
+| install | 安装 | `() => void` |  |
+| configure | 配置 | `() => void` |  |
+| pipeline | 流水线 | `() => void` |  |
+
+
+
 ### Enum
 
 
@@ -92,6 +141,20 @@
 | ---- | ---- | ------- |
 | 'api' | API文档 | `'api'` |
 | 'cmd' | 命令文档 | `'cmd'` |
+
+
+
+#### PROJECT_TYPE 项目类型
+
+
+**members**
+
+| 属性 | 说明 | 值 |
+| ---- | ---- | ------- |
+| classLib | 类库 | `'classLib'` |
+| componentLib | 组件库 | `'componentLib'` |
+| nodeClassLib | Node 类库 | `'nodeClassLib'` |
+| cli | 脚手架 | `'cli'` |
 
 
 
@@ -127,5 +190,31 @@
 | input | 入口文件或目录  完整路径 | `string` |
 | output | 输出目录  完整路径 | `string` |
 | cycle | 生命周期 | `GenerateFlowLifeCycle` |
+
+
+
+#### InitFlowLifeCycle 初始化流生命周期
+
+
+**members**
+
+| 属性 | 说明 | 类型 |
+| ---- | ---- | ------- |
+| install | 安装开始 | `() => any` |
+| installed | 安装结束 | `() => any` |
+| configure | 配置开始 | `() => any` |
+| configured | 配置结束 | `() => any` |
+
+
+
+#### InitFlowParameters 初始化流参数
+
+
+**members**
+
+| 属性 | 说明 | 类型 |
+| ---- | ---- | ------- |
+| projectType | 项目类型 | `PROJECT_TYPE` |
+| cycle | 生命周期 | `InitFlowLifeCycle` |
 
 
