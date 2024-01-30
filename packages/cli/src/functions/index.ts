@@ -1,1 +1,1 @@
-export * from '../modules/index/index';
+export * from '../modules/generate/index';

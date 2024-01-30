@@ -1,7 +1,7 @@
 import { existsSync, lstatSync } from 'fs';
 import { join } from 'path';
-import { GenerateFlow } from '../modules/index';
-import { GENERATE_TYPE } from '../modules/index/const';
+import { GenerateFlow } from '../modules/generate';
+import { GENERATE_TYPE } from '../modules/generate/const';
 import { startLoadingSpinner, succeedLoadingSpinner, textLoadingSpinner } from '../utils/spinner';
 import { loadExtendedConfig } from '../utils/typescript';
 
