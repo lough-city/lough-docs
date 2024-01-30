@@ -29,7 +29,7 @@
   "scripts": {
     "build": "lough-build",
     "dev": "lough-build dev",
-    "docs": "lough-docs --type=cmd && lough-docs"
+    "docs": "lough-docs --type cmd api"
   },
   "dependencies": {
     "@logically/coding-model": "^0.1.5",

@@ -153,7 +153,6 @@ const getClassDeclaration = (node: ts.ClassDeclaration, checker: ts.TypeChecker)
   };
 };
 
-// TODO: 剔除函数， 处理所有字面量 Literal，深度处理 Object 以及 Array 类型
 const getVariableDeclaration = (node: ts.VariableDeclaration, checker: ts.TypeChecker): VariableDeclaration => {
   if (ts.isVariableStatement(node)) {
     node = (node as ts.VariableStatement).declarationList.declarations[0];

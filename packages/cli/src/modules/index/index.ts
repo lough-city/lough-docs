@@ -127,7 +127,10 @@ export class GenerateFlow {
     }
 
     const markdown =
-      `## ${this.typeLabel}\n\n` + (binCmd ? `- **${binCmd}**\n\n` : '') + makerDeclarationDocs(declarationList);
+      `## ${this.typeLabel}\n\n` +
+      (binCmd ? `- **${binCmd}**\n\n` : '') +
+      makerDeclarationDocs(declarationList) +
+      LINE_BREAK;
 
     this.cycle.emit('made');
 
@@ -150,7 +153,7 @@ export class GenerateFlow {
       if (reg.test(readme)) {
         content = readme.replace(reg, markdown);
       } else {
-        content = readme ? `${readme}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${LINE_BREAK}${markdown}` : markdown;
+        content = readme ? `${readme}${LINE_BREAK}${markdown}` : markdown;
       }
 
       const config = this.npm.readConfig();
