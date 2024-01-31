@@ -3,7 +3,7 @@ import { join } from 'path';
 import { GenerateFlow } from '../modules/generate';
 import { GENERATE_TYPE } from '../modules/generate/const';
 import { startLoadingSpinner, succeedLoadingSpinner, textLoadingSpinner } from '../utils/spinner';
-import { loadExtendedConfig } from '../utils/typescript';
+// import { loadExtendedConfig } from '../utils/typescript';
 
 /**
  * 生成选项
@@ -47,13 +47,14 @@ const action = async (options: GenerateOptions) => {
       input = join(rootDir, input);
     } else {
       if (type === GENERATE_TYPE.api) {
-        const tsconfigPath = join(rootDir, 'tsconfig.json');
-        if (existsSync(tsconfigPath)) {
-          const parsedConfig = loadExtendedConfig(tsconfigPath);
-          input = parsedConfig.fileNames[0];
-        } else {
-          input = '';
-        }
+        // const tsconfigPath = join(rootDir, 'tsconfig.json');
+        // if (existsSync(tsconfigPath)) {
+        //   const parsedConfig = loadExtendedConfig(tsconfigPath);
+        //   input = parsedConfig.fileNames[0];
+        // } else {
+        //   input = '';
+        // }
+        input = join(rootDir, 'src/index.ts');
       } else {
         input = join(rootDir, 'src/commands');
       }

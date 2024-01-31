@@ -38,9 +38,9 @@ const getProjectType = () =>
 export interface InitOptions {
   /**
    * 项目类型
-   * @default `PROJECT_TYPE.classLib`
+   * @description 如果为静默模式，默认为类库 `classLib`
    */
-  projectType: PROJECT_TYPE;
+  projectType?: PROJECT_TYPE;
   /**
    * 静默
    * @description 是否开启静默模式
@@ -58,7 +58,7 @@ const action = async (options: InitOptions) => {
 
   const npm = new Package();
 
-  const projectType = options.projectType || (await getProjectType());
+  const projectType = options.projectType || ((await getProjectType()) as PROJECT_TYPE);
 
   const initFlow = new InitFlow({
     projectType,
@@ -105,8 +105,7 @@ export default {
   options: [
     [
       '-pt, --projectType [string]',
-      `classLib | componentLib | nodeClassLib | cli, default is \`classLib\`.`,
-      PROJECT_TYPE.classLib
+      `classLib | componentLib | nodeClassLib | cli, if quite is true, default is \`classLib\`.`
     ],
     ['-q, --quite [boolean]', 'execute the program silently.', false]
   ],

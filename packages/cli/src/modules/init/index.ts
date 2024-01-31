@@ -1,7 +1,11 @@
-import { join } from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import { LifeCycle } from '@logically/coding-model';
 import { Package } from '@lough/npm-operate';
 import { PROJECT_TYPE } from './const';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * 初始化流生命周期

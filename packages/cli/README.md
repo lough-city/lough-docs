@@ -73,7 +73,7 @@ init lough-docs in project.
 
 **options**:
 
-- `"-pt, --projectType [string]", "classLib | componentLib | nodeClassLib | cli, default is `classLib`.", PROJECT_TYPE.classLib`
+- `"-pt, --projectType [string]", "classLib | componentLib | nodeClassLib | cli, if quite is true, default is `classLib`."`
 - `"-q, --quite [boolean]", "execute the program silently.", false`
 
 
@@ -94,7 +94,7 @@ init lough-docs in project.
 
 | 属性 | 说明 | 类型 |
 | ---- | ---- | ------- |
-| projectType | 项目类型 | `PROJECT_TYPE` |
+| projectType | 项目类型  如果为静默模式，默认为类库 `classLib` | `PROJECT_TYPE` |
 | quite | 静默  是否开启静默模式 | `boolean` |
 
 
@@ -252,4 +252,5 @@ init lough-docs in project.
 | ---- | ---- | ------- |
 | projectType | 项目类型 | `PROJECT_TYPE` |
 | cycle | 生命周期 | `InitFlowLifeCycle` |
+
 

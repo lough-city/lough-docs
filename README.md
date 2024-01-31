@@ -15,6 +15,6 @@
 项目初始化：
 
 ```bash
-npx @lough/docs-cli init
+npx @lough/docs-cli@latest init
 ```
 
