@@ -4,6 +4,35 @@
 
 
 
+一款集成了 `TypeScript` 与 `JSDoc` 的强大文档生成工具，旨在简化创建和维护项目文档的过程。
+
+
+
+## Feature
+
+- **基于 TypeScript**：直接使用 `TypeScript` 源文件，利用 `TypeScript` 强大的类型系统，为文档提供准确而丰富的信息。
+- **自动生成 API 文档**：从 `TypeScript` 代码和 `JSDoc` 注释自动生成 `API` 文档，包括类、接口、函数等。
+- **命令行界面 (CLI)**：提供简单直观的 `CLI`，轻松生成文档。
+- **支持 Markdown**：生成的文档为 `Markdown` 格式，方便与各种版本控制平台和文档工具集成。
+
+
+
+## Install
+
+全局安装
+
+```bash
+npm install @lough/docs-cli -g
+```
+
+局部安装
+
+```bash
+npm install @lough/docs-cli -D
+```
+
+
+
 ## CMD
 
 
@@ -223,5 +252,4 @@ init lough-docs in project.
 | ---- | ---- | ------- |
 | projectType | 项目类型 | `PROJECT_TYPE` |
 | cycle | 生命周期 | `InitFlowLifeCycle` |
-
 
