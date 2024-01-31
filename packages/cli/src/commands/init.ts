@@ -1,14 +1,8 @@
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
-import { Package } from '@lough/npm-operate';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { InitFlow } from '../modules/init';
 import { PROJECT_TYPE } from '../modules/init/const';
 import { startLoadingSpinner, succeedLoadingSpinner, succeedSpinner } from '../utils/spinner';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const PROJECT_TYPE_LABEL = {
   [PROJECT_TYPE.classLib]: '类库',
@@ -53,11 +47,6 @@ export interface InitOptions {
  * 初始化文档工具
  */
 const action = async (options: InitOptions) => {
-  const self = new Package({ dirName: join(__dirname, '../../') });
-  const selfConfig = self.readConfig();
-
-  const npm = new Package();
-
   const projectType = options.projectType || ((await getProjectType()) as PROJECT_TYPE);
 
   const initFlow = new InitFlow({
@@ -81,20 +70,6 @@ const action = async (options: InitOptions) => {
   });
 
   initFlow.pipeline();
-
-  startLoadingSpinner(`开始安装 ${selfConfig.name}`);
-  if (npm.readConfig().dependencies?.[selfConfig.name]) {
-    npm.uninstall(selfConfig.name);
-  }
-  npm.installDev(selfConfig.name);
-  succeedLoadingSpinner('安装成功');
-
-  startLoadingSpinner(`开始写入 package.json`);
-  const config = npm.readConfig();
-  if (!config.scripts) config.scripts = {};
-  config.scripts.docs = projectType === PROJECT_TYPE.cli ? `lough-docs --type cmd api` : 'lough-docs';
-  npm.writeConfig(config);
-  succeedLoadingSpinner('写入 package.json 成功');
 
   succeedSpinner(`${chalk.blue('Lough Docs:')} ${chalk.green('succeed')}`);
 };
