@@ -3,10 +3,11 @@ import { join } from 'path';
 import { LifeCycle } from '@logically/coding-model';
 import { Package } from '@lough/npm-operate';
 import { LINE_BREAK } from '../../constants';
-import { AllDeclaration } from '../../typings/declaration';
 import { GENERATE_TYPE } from './const';
-import { makerDeclarationDocs } from './core/maker';
-import { parseTypeScriptProject } from './core/parser';
+import { makerDeclarationDocs } from './maker/api';
+import { makerCommandDeclarationDocs } from './maker/cmd';
+import { parseTypeScriptProject } from './parser';
+import { AllDeclaration } from './typings/declaration';
 
 /**
  * 生成流生命周期
@@ -119,20 +120,17 @@ export class GenerateFlow {
   make(declarationList: Array<AllDeclaration>) {
     this.cycle.emit('make');
 
-    const config = this.npm.readConfig();
+    if (this.options.type === GENERATE_TYPE.api) {
+      const markdown = `## ${this.typeLabel}\n\n` + makerDeclarationDocs(declarationList) + LINE_BREAK;
 
-    let binCmd = '';
-    if (this.options.type === GENERATE_TYPE.api && typeof config.bin === 'object') {
-      binCmd = Object.keys(config.bin)[0];
+      this.cycle.emit('made');
+
+      return markdown;
     }
-
-    // TODO: declarationList 排序，declarationList[0].name === 'main' 最前
-    // TODO: 优化显示
 
     const markdown =
       `## ${this.typeLabel}\n\n` +
-      (binCmd ? `- **${binCmd}**\n\n` : '') +
-      makerDeclarationDocs(declarationList) +
+      makerCommandDeclarationDocs(Object.keys(this.npm.readConfig()?.bin || {})[0] || '', declarationList) +
       LINE_BREAK;
 
     this.cycle.emit('made');

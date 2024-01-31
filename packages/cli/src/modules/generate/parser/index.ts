@@ -1,9 +1,9 @@
 import { basename, extname } from 'path';
 import ts from 'typescript';
-import { DECLARATION_KIND } from '../../../../constants/declaration';
-import { AllDeclaration } from '../../../../typings/declaration';
-import { resolveModulePath } from '../../../../utils/path';
-import { parseTypeScriptPath } from '../../../../utils/typescript';
+import { resolveModulePath } from '../../../utils/path';
+import { parseTypeScriptPath } from '../../../utils/typescript';
+import { DECLARATION_KIND } from '../constants/declaration';
+import { AllDeclaration } from '../typings/declaration';
 import { createVirtualVariableDeclarationForExportAssignment } from './create';
 import { getNodeDeclaration } from './declaration';
 import { isNodeExported } from './export';

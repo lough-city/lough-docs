@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { JSDocComments } from '../../../../typings/comment';
+import { JSDocComments } from '../typings/comment';
 
 export function parseJSDocComments(symbol: ts.Symbol, checker: ts.TypeChecker): JSDocComments {
   const jsDocs = symbol.getJsDocTags(checker);

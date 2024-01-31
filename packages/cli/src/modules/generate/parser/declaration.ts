@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { DECLARATION_KIND } from '../../../../constants/declaration';
+import { DECLARATION_KIND } from '../constants/declaration';
 import {
   AllDeclaration,
   ClassDeclaration,
@@ -8,8 +8,8 @@ import {
   InterfaceDeclaration,
   TypeAliasDeclaration,
   VariableDeclaration
-} from '../../../../typings/declaration';
-import { ClassMemberDeclaration } from '../../../../typings/item';
+} from '../typings/declaration';
+import { ClassMemberDeclaration } from '../typings/item';
 import { parseJSDocComments } from './comment';
 import { getNodeDeclarationKind } from './kind';
 

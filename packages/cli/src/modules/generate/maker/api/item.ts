@@ -1,12 +1,12 @@
 import { LINE_BREAK } from '../../../../constants';
-import { JSDocComments } from '../../../../typings/comment';
-import { AllDeclaration } from '../../../../typings/declaration';
+import { JSDocComments } from '../../typings/comment';
+import { AllDeclaration } from '../../typings/declaration';
 import {
   ClassMemberDeclaration,
   EnumMemberDeclaration,
   InterfaceMemberDeclaration,
   ParameterDeclaration
-} from '../../../../typings/item';
+} from '../../typings/item';
 import { makeMarkdownTitle } from './markdown';
 
 export const makeDeclarationTitle = (declaration: AllDeclaration) => {
@@ -74,7 +74,12 @@ export const makDeclarationInterfaceMembers = (members: Array<InterfaceMemberDec
 | 属性 | 说明 | 类型 |
 | ---- | ---- | ------- |
 ${members
-  .map(member => `| ${member.name} | ${makeDeclarationDescription(member.comments)} | \`${member.type}\` |`)
+  .map(
+    member =>
+      `| ${member.name} | ${makeDeclarationDescription(member.comments)} | ${
+        member.type.includes('<br') ? member.type : `\`${member.type}\``
+      } |`
+  )
   .join(LINE_BREAK)}
 `;
 };

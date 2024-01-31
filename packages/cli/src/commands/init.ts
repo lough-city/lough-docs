@@ -105,7 +105,7 @@ export default {
   options: [
     [
       '-pt, --projectType [string]',
-      `${Object.values(PROJECT_TYPE).join(' | ')}, default is \`classLib\`.`,
+      `classLib | componentLib | nodeClassLib | cli, default is \`classLib\`.`,
       PROJECT_TYPE.classLib
     ],
     ['-q, --quite [boolean]', 'execute the program silently.', false]

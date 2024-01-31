@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { DECLARATION_KIND } from '../../../../constants/declaration';
+import { DECLARATION_KIND } from '../constants/declaration';
 
 export const getNodeDeclarationKind = (node: ts.Node): DECLARATION_KIND | undefined => {
   if (ts.isEnumDeclaration(node)) return DECLARATION_KIND.ENUM;

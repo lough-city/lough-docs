@@ -1,4 +1,5 @@
-import { DECLARATION_KIND } from '../../../../constants/declaration';
+import { DECLARATION_KIND } from '../../constants/declaration';
+import { groupDeclarationByKind } from '../../parser';
 import {
   AllDeclaration,
   ClassDeclaration,
@@ -7,8 +8,7 @@ import {
   InterfaceDeclaration,
   TypeAliasDeclaration,
   VariableDeclaration
-} from '../../../../typings/declaration';
-import { groupDeclarationByKind } from '../parser';
+} from '../../typings/declaration';
 import {
   makeByClass,
   makeByEnum,

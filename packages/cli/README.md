@@ -6,42 +6,51 @@
 
 ## CMD
 
-- **lough-docs**
+
+
+### Command
+
+
+```bash
+lough-docs [options] [command]
+```
 
 
 
-### Variable
+generate docs by typescript.
 
 
 
-#### init 
+**options**:
 
-**type**: `Object`
-
-
-**members**
-
-| 属性 | 说明 | 类型 |
-| ---- | ---- | ------- |
-| name | - | `"init"` |
-| description | - | `"init lough-docs in project."` |
-| options | - | ``"-pt, --projectType [string]", string, PROJECT_TYPE.classLib`<br />`"-q, --quite [boolean]", "execute the program silently.", false`` |
-| action | - | `(options: InitOptions) => Promise<void>` |
+- `"-t, --type [string...]", "generate type: Array<api | cmd>", string[]`
+- `"-i, --input [string]", "generate file input directory or typescript file, if type is api default is tsconfig input, else default is src/commands."`
+- `"-o, --output [string]", "generate file output directory or markdown file, default is README.md."`
+- `"-q, --quite [boolean]", "execute the program silently.", false`
 
 
 
-#### main 
-
-**type**: `Object`
+**action**: `(options: GenerateOptions) => Promise<void>`
 
 
-**members**
 
-| 属性 | 说明 | 类型 |
-| ---- | ---- | ------- |
-| description | - | `"generate docs by typescript."` |
-| options | - | ``"-t, --type [string...]", "generate type: Array<api | cmd>", string[]`<br />`"-i, --input [string]", "generate file input directory or typescript file, if type is api default is tsconfig input, else default is src/commands."`<br />`"-o, --output [string]", "generate file output directory or markdown file, default is README.md."`<br />`"-q, --quite [boolean]", "execute the program silently.", false`` |
-| action | - | `(options: GenerateOptions) => Promise<void>` |
+#### init
+
+
+
+init lough-docs in project.
+
+
+
+**options**:
+
+- `"-pt, --projectType [string]", "classLib | componentLib | nodeClassLib | cli, default is `classLib`.", PROJECT_TYPE.classLib`
+- `"-q, --quite [boolean]", "execute the program silently.", false`
+
+
+
+**action**: `(options: InitOptions) => Promise<void>`
+
 
 
 
@@ -76,8 +85,6 @@
 
 
 ## API
-
-- **lough-docs**
 
 
 

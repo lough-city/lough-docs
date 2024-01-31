@@ -5,7 +5,7 @@ import {
   InterfaceDeclaration,
   TypeAliasDeclaration,
   VariableDeclaration
-} from '../../../../typings/declaration';
+} from '../../typings/declaration';
 import {
   makDeclarationEnumMembers,
   makDeclarationInterfaceMembers,
