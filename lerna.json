@@ -1,0 +1,14 @@
+{
+  "packages": ["packages/*"],
+  "version": "independent",
+  "npmClient": "npm",
+  "useNx": false,
+  "command": {
+    "publish": {
+      "registry": "https://registry.npmjs.org"
+    },
+    "version": {
+      "message": "chore(release): publish"
+    }
+  }
+}

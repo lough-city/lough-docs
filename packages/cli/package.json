@@ -7,7 +7,7 @@
     "email": "lough@nanzc.com",
     "home": "lough.city"
   },
-  "homepage": "https://github.com/lough-city/lough-docs#readme",
+  "homepage": "https://github.com/lough-city/lough-docs/tree/main/packages/cli#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lough-city/lough-docs.git"
@@ -27,6 +27,7 @@
     "lough-docs": "es/bin.js"
   },
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "lough-build",
     "dev": "lough-build dev",
     "docs": "lough-docs --type cmd api"
